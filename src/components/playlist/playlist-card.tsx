@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlayCircle, ListVideo } from "lucide-react";
+import Image from 'next/image';
 
 interface PlaylistCardProps {
   title: string;
@@ -24,12 +25,18 @@ export function PlaylistCard({
       onClick={onClick}
     >
       <CardHeader className="space-y-4 p-5">
-        <div className="aspect-video overflow-hidden rounded-md relative">
-          <img
-            src={thumbnailUrl || 'https://via.placeholder.com/320x180?text=No+Thumbnail'}
-            alt={title}
-            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-          />
+        <div className="relative aspect-video overflow-hidden rounded-lg">
+          {thumbnailUrl ? (
+            <Image
+              src={thumbnailUrl}
+              alt={title}
+              width={320}
+              height={180}
+              className="object-cover transition-all hover:scale-105"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-muted" />
+          )}
           <div className="absolute inset-0 bg-black/60 opacity-0 transition-all duration-300 group-hover:opacity-100 flex items-center justify-center">
             <PlayCircle className="h-12 w-12 text-white transform scale-90 transition-transform duration-300 group-hover:scale-100" />
           </div>

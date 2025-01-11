@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "next-themes";
+import Image from 'next/image';
 
 interface UserInfo {
   title: string;
@@ -52,14 +53,14 @@ export function Header({ userInfo, isLoading, onLogin, onLogout }: HeaderProps) 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-                    {userInfo.thumbnails?.default?.url ? (
-                      <img
+                    {userInfo?.thumbnails?.default?.url && (
+                      <Image
                         src={userInfo.thumbnails.default.url}
                         alt={userInfo.title}
-                        className="h-9 w-9 rounded-full ring-2 ring-primary/20 transition-all hover:ring-primary/30"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
                       />
-                    ) : (
-                      <User className="h-5 w-5" />
                     )}
                   </Button>
                 </DropdownMenuTrigger>

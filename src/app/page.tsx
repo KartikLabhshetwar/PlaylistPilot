@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -70,18 +71,7 @@ export default function Home() {
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | null>(null);
   const [isLoadingChannel, setIsLoadingChannel] = useState(false);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log('User is authenticated, fetching playlists');
-      fetchUserPlaylists();
-    } else {
-      console.log('User is not authenticated, clearing playlists');
-      setPlaylists([]);
-      setChannelInfo(null);
-    }
-  }, [isAuthenticated]);
-
-  const fetchUserPlaylists = async () => {
+  const fetchUserPlaylists = useCallback(async () => {
     try {
       console.log('Starting fetchUserPlaylists', { channelId });
       setIsLoading(true);
@@ -131,7 +121,18 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [channelId, toast]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('User is authenticated, fetching playlists');
+      fetchUserPlaylists();
+    } else {
+      console.log('User is not authenticated, clearing playlists');
+      setPlaylists([]);
+      setChannelInfo(null);
+    }
+  }, [isAuthenticated, fetchUserPlaylists]);
 
   const fetchPlaylistVideos = async (playlist: Playlist, pageToken?: string) => {
     try {
@@ -292,10 +293,12 @@ export default function Home() {
       {channelInfo && (
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 p-4 rounded-lg border bg-card">
-            <img
+            <Image
               src={channelInfo.thumbnailUrl}
               alt={channelInfo.title}
-              className="w-16 h-16 rounded-full"
+              width={64}
+              height={64}
+              className="rounded-full"
             />
             <div>
               <h3 className="text-lg font-semibold">{channelInfo.title}</h3>

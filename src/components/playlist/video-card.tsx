@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { PlayCircle } from "lucide-react";
 
 interface VideoCardProps {
@@ -17,13 +18,18 @@ export function VideoCard({ title, description, thumbnailUrl, videoId }: VideoCa
       rel="noopener noreferrer"
       className="group relative flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
     >
-      <div className="aspect-video w-full overflow-hidden bg-muted relative">
-        <img
-          src={thumbnailUrl || 'https://via.placeholder.com/320x180?text=No+Thumbnail'}
-          alt={title}
-          className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-          loading="lazy"
-        />
+      <div className="relative aspect-video overflow-hidden rounded-lg">
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt={title}
+            width={320}
+            height={180}
+            className="object-cover transition-all hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-muted" />
+        )}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
           <PlayCircle className="w-12 h-12 text-white opacity-90" />
         </div>

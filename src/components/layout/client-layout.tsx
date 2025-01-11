@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { useToast } from "@/hooks/use-toast";
@@ -42,11 +42,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
-
-  const checkLoginStatus = async () => {
+  const checkLoginStatus = useCallback(async () => {
     try {
       const response = await fetch('/api/user');
       const data = await response.json();
@@ -69,7 +65,11 @@ export function ClientLayout({ children }: ClientLayoutProps) {
       setIsLoading(false);
       setIsInitialized(true);
     }
-  };
+  }, [isInitialized, toast]);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
 
   const handleLogin = async () => {
     try {
