@@ -19,6 +19,13 @@ interface UserInfo {
   thumbnails?: {
     default?: {
       url: string;
+      width: number;
+      height: number;
+    };
+    medium?: {
+      url: string;
+      width: number;
+      height: number;
     };
   };
 }
@@ -37,6 +44,14 @@ export function Header({ userInfo, isLoading, onLogin, onLogout }: HeaderProps) 
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
+  // Get the best available thumbnail URL
+  const getProfileImage = () => {
+    if (!userInfo?.thumbnails) return null;
+    return userInfo.thumbnails.medium?.url || userInfo.thumbnails.default?.url || null;
+  };
+
+  const profileImage = getProfileImage();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-zinc-900/95 dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,15 +67,31 @@ export function Header({ userInfo, isLoading, onLogin, onLogout }: HeaderProps) 
             ) : userInfo ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full overflow-hidden">
-                    {userInfo?.thumbnails?.default?.url ? (
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative h-9 w-9 rounded-full overflow-hidden ring-1 ring-border hover:ring-primary transition-colors"
+                  >
+                    {profileImage ? (
                       <Image
-                        src={userInfo.thumbnails.default.url}
+                        src={profileImage}
                         alt={userInfo.title}
                         fill
                         className="object-cover"
-                        sizes="32px"
+                        sizes="36px"
                         priority
+                        onError={(e) => {
+                          // Fallback to user icon if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'flex items-center justify-center w-full h-full';
+                            fallback.innerHTML = '<svg class="h-5 w-5" viewBox="0 0 24 24"><use href="#user-icon"></use></svg>';
+                            parent.appendChild(fallback);
+                          }
+                        }}
                       />
                     ) : (
                       <User className="h-5 w-5" />
