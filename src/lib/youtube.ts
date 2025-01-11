@@ -270,7 +270,8 @@ export const youtube = {
   async getPlaylistVideos(
     playlistId: string,
     accessToken?: string,
-    pageToken?: string
+    pageToken?: string,
+    maxResults: number = 20 // Default to 20 items per page
   ): Promise<PlaylistVideoResponse> {
     try {
       const client = accessToken ? youtubeClient : youtubeWithApiKey;
@@ -282,7 +283,7 @@ export const youtube = {
         auth: accessToken ? oauth2Client : process.env.YOUTUBE_API_KEY,
         part: ['snippet', 'contentDetails'],
         playlistId: playlistId,
-        maxResults: 50,
+        maxResults: maxResults,
         pageToken
       });
 
