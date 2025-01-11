@@ -13,22 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "next-themes";
 import Image from 'next/image';
-
-interface UserInfo {
-  title: string;
-  thumbnails?: {
-    default?: {
-      url: string;
-      width: number;
-      height: number;
-    };
-    medium?: {
-      url: string;
-      width: number;
-      height: number;
-    };
-  };
-}
+import { UserInfo } from "@/types";
 
 interface HeaderProps {
   userInfo: UserInfo | null;

@@ -4,15 +4,7 @@ import { useState, useEffect, createContext, useContext, useCallback } from 'rea
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { useToast } from "@/hooks/use-toast";
-
-interface UserInfo {
-  title: string;
-  thumbnails?: {
-    default?: {
-      url: string;
-    };
-  };
-}
+import { UserInfo } from "@/types";
 
 interface AuthContextType {
   userInfo: UserInfo | null;
