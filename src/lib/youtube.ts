@@ -230,8 +230,8 @@ export const youtube = {
             totalResults: channelPlaylists.data.pageInfo?.totalResults || 0,
             resultsPerPage: channelPlaylists.data.pageInfo?.resultsPerPage || 0
           },
-          nextPageToken: channelPlaylists.data.nextPageToken ?? undefined,
-          prevPageToken: channelPlaylists.data.prevPageToken ?? undefined
+          nextPageToken: channelPlaylists.data.nextPageToken || undefined,
+          prevPageToken: channelPlaylists.data.prevPageToken || undefined
         };
       }
 
@@ -250,8 +250,8 @@ export const youtube = {
           totalResults: ownPlaylists.data.pageInfo?.totalResults || 0,
           resultsPerPage: ownPlaylists.data.pageInfo?.resultsPerPage || 0
         },
-        nextPageToken: ownPlaylists.data.nextPageToken ?? undefined,
-        prevPageToken: ownPlaylists.data.prevPageToken ?? undefined
+        nextPageToken: ownPlaylists.data.nextPageToken || undefined,
+        prevPageToken: ownPlaylists.data.prevPageToken || undefined
       };
     } catch (error) {
       console.error('Error fetching playlists:', error);
@@ -391,5 +391,17 @@ export const youtube = {
       console.error('Error fetching user info:', error);
       throw error;
     }
+  },
+
+  async getPlaylist(playlistId: string, accessToken: string) {
+    oauth2Client.setCredentials({ access_token: accessToken });
+    
+    const response = await youtubeClient.playlists.list({
+      auth: oauth2Client,
+      part: ['snippet', 'contentDetails'],
+      id: [playlistId]
+    });
+
+    return response.data.items?.[0];
   },
 };

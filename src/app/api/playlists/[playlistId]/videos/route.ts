@@ -17,15 +17,39 @@ export async function GET(
     const userId = cookieStore.get('userId')?.value || 'default-user';
     const tokens = await db.getTokens(userId);
 
+    // Check if we have valid tokens
+    if (!tokens?.accessToken) {
+      return NextResponse.json(
+        { error: 'Please sign in again' },
+        { status: 401 }
+      );
+    }
+
     const playlistId = params.playlistId;
+    
+    // First, ensure the playlist exists in the database
+    const playlist = await youtube.getPlaylist(playlistId, tokens.accessToken);
+    if (playlist && playlist.id) {
+      await db.savePlaylists(userId, [{
+        playlist_id: playlist.id,
+        name: playlist.snippet?.title || '',
+        description: playlist.snippet?.description || '',
+        thumbnail_url: playlist.snippet?.thumbnails?.medium?.url || '',
+        video_count: playlist.contentDetails?.itemCount || 0
+      }]);
+    }
+
+    // Now fetch and save the videos
     const response = await youtube.getPlaylistVideos(
       playlistId,
-      tokens?.accessToken,
+      tokens.accessToken,
       pageToken
     );
     
     // Save videos to database
-    await db.savePlaylistVideos(playlistId, response.items);
+    if (response.items) {
+      await db.savePlaylistVideos(playlistId, response.items);
+    }
 
     return NextResponse.json({
       items: response.items?.map(video => ({
@@ -46,6 +70,14 @@ export async function GET(
       return NextResponse.json(
         { error: 'Playlist not found' },
         { status: 404 }
+      );
+    }
+
+    // Type guard for Error objects
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
       );
     }
 
