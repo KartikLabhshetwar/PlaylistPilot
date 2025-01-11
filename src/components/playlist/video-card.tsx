@@ -18,14 +18,14 @@ export function VideoCard({ title, description, thumbnailUrl, videoId }: VideoCa
       rel="noopener noreferrer"
       className="group relative flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
     >
-      <div className="relative aspect-video overflow-hidden rounded-lg">
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg">
         {thumbnailUrl ? (
           <Image
             src={thumbnailUrl}
             alt={title}
-            width={320}
-            height={180}
+            fill
             className="object-cover transition-all hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="absolute inset-0 bg-muted" />

@@ -52,15 +52,18 @@ export function Header({ userInfo, isLoading, onLogin, onLogout }: HeaderProps) 
             ) : userInfo ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-                    {userInfo?.thumbnails?.default?.url && (
+                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full overflow-hidden">
+                    {userInfo?.thumbnails?.default?.url ? (
                       <Image
                         src={userInfo.thumbnails.default.url}
                         alt={userInfo.title}
-                        width={32}
-                        height={32}
-                        className="rounded-full"
+                        fill
+                        className="object-cover"
+                        sizes="32px"
+                        priority
                       />
+                    ) : (
+                      <User className="h-5 w-5" />
                     )}
                   </Button>
                 </DropdownMenuTrigger>
